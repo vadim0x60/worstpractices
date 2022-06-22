@@ -7,7 +7,7 @@ from setuptools import setup
 HERE = Path(__name__).parent
 PKG_NAME = 'worstpractices'
 
-reqs, extras = gather_reqs(HERE / PKG_NAME / 'requirements.txt')
+reqs, extras = gather_reqs(HERE / PKG_NAME)
 
 setup(
     name=PKG_NAME,
