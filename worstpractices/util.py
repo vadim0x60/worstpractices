@@ -35,7 +35,7 @@ def remedy(problem, remedy):
             try:
                 return f(*args, **kwargs)
             except problem:
-                remedy(problem)
+                remedy(*args, **kwargs)
                 return f(*args, **kwargs)
 
         return robust_f
