@@ -1,0 +1,4 @@
+tianshou==0.*
+pygame==2.*
+pyvirtualdisplay==3.*
+evestop==0.*
