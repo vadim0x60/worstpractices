@@ -1,24 +1,13 @@
 import itertools
 from pathlib import Path
+from worstpractices import gather_reqs
 
 from setuptools import setup
 
 HERE = Path(__name__).parent
 PKG_NAME = 'worstpractices'
 
-extras = {}
-
-for subpackage in (HERE / PKG_NAME).iterdir():
-    try:
-        subrequirements = (subpackage / 'requirements.txt').read_text()
-        extras[subpackage.name] = subrequirements.splitlines()
-    except FileNotFoundError:
-        pass
-
-extras['all'] = list(
-    itertools.chain(reqs for subpackage, reqs in extras.items())
-)
-
+reqs, extras = gather_reqs(HERE / PKG_NAME / 'requirements.txt')
 
 setup(
     name=PKG_NAME,
@@ -31,7 +20,7 @@ setup(
     author_email='hello@vadim.me',
     license='MIT',
     packages=[PKG_NAME],
-    install_requires=(HERE / PKG_NAME / 'requirements.txt').read_text().splitlines(),
+    install_requires=reqs,
     extras_require=extras,
     python_requires='>=3.0',
     classifiers=[
