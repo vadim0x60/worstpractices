@@ -78,9 +78,10 @@ def rainbow(
         resume=False,
         device='cuda',
         save_interval=4,
-        task='CartPole-v0'):
+        task='CartPole-v0',
+        wandb_project='worstpractices'):
     config = {**locals(), **global_config}
-    tianshou_logger = WandbLogger(project='fetal', 
+    tianshou_logger = WandbLogger(project=wandb_project, 
                                   save_interval=save_interval, 
                                   config=config)
     writer = SummaryWriter(logdir)
