@@ -77,7 +77,7 @@ def rainbow(
         resume=False,
         device='cuda',
         save_interval=4,
-        task='FetalDiscrete-v0'):
+        task='CartPole-v0'):
     config = {**locals(), **global_config}
     logger = WandbLogger(project='fetal', 
                          save_interval=save_interval, 
