@@ -16,6 +16,7 @@ from tianshou.utils.net.common import Net
 from tianshou.utils.net.discrete import NoisyLinear
 
 from worstpractices import tolerate_extra_args, remedy
+from worstpractices.rl.util import GoOutWithABang, LinearLogger
  
 from evestop.generic import EVEEarlyStopping
 
@@ -79,14 +80,24 @@ def rainbow(
         save_interval=4,
         task='CartPole-v0'):
     config = {**locals(), **global_config}
-    logger = WandbLogger(project='fetal', 
-                         save_interval=save_interval, 
-                         config=config)
+    tianshou_logger = WandbLogger(project='fetal', 
+                                  save_interval=save_interval, 
+                                  config=config)
     writer = SummaryWriter(logdir)
     writer.add_text('config', str(config))
-    logger.load(writer)
+    tianshou_logger.load(writer)
 
-    video_path = os.path.join('videos', str(logger.wandb_run.id))
+    additional_logger = LinearLogger(tianshou_logger)
+
+    video_path = os.path.join('videos', str(tianshou_logger.wandb_run.id))
+
+    def log_info(obs, rew, done, info):
+        additional_logger.write('test/info', info)
+
+    def test_scaffold(env, idx):
+        env = gym.wrappers.RecordVideo(env, os.path.join(video_path, str(idx)))
+        env = GoOutWithABang(env, log_info)
+        return env
 
     env = make(task)
     state_shape = env.observation_space.shape or env.observation_space.n
@@ -98,9 +109,8 @@ def rainbow(
     )
     # test_envs = make(task)
     test_envs = DummyVectorEnv(
-        [lambda: gym.wrappers.RecordVideo(make(task, partition='test'), 
-                                          os.path.join(video_path, str(test_num))) 
-         for _ in range(test_num)]
+        [lambda: test_scaffold(make(task, partition='test'), idx) 
+         for idx in range(test_num)]
     )
     # seed
     np.random.seed(seed)
@@ -154,7 +164,7 @@ def rainbow(
     # policy.set_eps(1)
     train_collector.collect(n_step=batch_size * training_num)
     # log
-    log_path = os.path.join(logdir, str(logger.wandb_run.id))
+    log_path = os.path.join(logdir, str(tianshou_logger.wandb_run.id))
     os.makedirs(log_path, exist_ok=True)
     ckpt_path = os.path.join(log_path, 'checkpoint.pth')
     policy_path = os.path.join(log_path, 'policy.pth')
@@ -228,7 +238,7 @@ def rainbow(
         test_fn=test_fn,
         stop_fn=stop_fn,
         save_best_fn=save_policy_fn,
-        logger=logger,
+        logger=tianshou_logger,
         resume_from_log=resume,
         save_checkpoint_fn=save_checkpoint_fn
     )
