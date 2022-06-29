@@ -30,4 +30,5 @@ setup(
         'Programming Language :: Python :: 3',
         'Topic :: Software Development :: Libraries'
     ],
+    scripts=['bin/worstrl']
 )
