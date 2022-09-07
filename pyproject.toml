@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "worstpractices"
+version = "0.1.0"
+description = "An opinionanted library of Python/ML practices"
+authors = ["Vadim Liventsev <dev@vadim.me>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fire = "0.*"
+
+[tool.poetry.extras]
+rl = ["tianshou", "pygame", "pyvirtualdisplay", "evestop"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+worstrl = "bin:worstrl"
