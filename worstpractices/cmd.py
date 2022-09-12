@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-
 from fire import Fire
 from worstpractices.rl.rainbow import rainbow
 
-Fire(rainbow)
+def worstrl():
+    Fire(rainbow)
