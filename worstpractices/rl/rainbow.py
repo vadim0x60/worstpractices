@@ -1,5 +1,5 @@
 import os
-import pprint
+import importlib
 
 import gym
 import pygame
@@ -70,6 +70,7 @@ def rainbow(
         training_num=8,
         test_num=100,
         logdir='log',
+        module=None,
         render=0.,
         prioritized_replay=False,
         alpha=0.6,
@@ -80,6 +81,9 @@ def rainbow(
         save_interval=4,
         task='CartPole-v0',
         wandb_project='worstpractices'):
+    if module:
+        importlib.import_module(module)
+
     config = {**locals(), **global_config}
     tianshou_logger = WandbLogger(project=wandb_project, 
                                   save_interval=save_interval, 
